@@ -2,16 +2,79 @@
 <html>
   <head>
   	<meta charset="utf-8">
-  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/common/css/bootstrap.min.css' />
+    <title>Note</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <link rel='stylesheet' href='/common/css/note.css' />
+    <link rel='stylesheet' href='/index/css/index.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+  
+    <div class="header">
+      <div class="navbar">
+        <div class="navbar-left">
+          <a class="navbar-tool navbar-hamburger" data-toggle="slider" href="#collapseSlider" aria-expanded="false" aria-controls="collapseSlider"></a>
+          <a class="navbar-tool navbar-brand">Note</a>
+        </div>
+        <div class="navbar-right">
+          <a class="navbar-tool navbar-options" href="#"></a>
+          <a class="navbar-tool navbar-search" href="#"></a>
+        </div>
+        <div class="navbar-slider fade" id="collapseSlider">
+          <div class="dialog">
+            <% if(user) { %>
+            <div class="dialog-header">
+              <div class="portrait">
+                <span class="thumb"></span>
+              </div>
+              <div class="account">
+                <a href="#">445088977@qq.com</a>
+              </div>
+            </div>
+            <div class="dialog-body">
+              <ul class="breadcrumb">
+                <li class="active"><a href="/all">所有笔记</a></li>
+                <li><a href="/book">笔记本</a></li>
+              </ul>
+            </div>
+            <% } else { %>
+            <div class="dialog-header">
+              <div class="portrait">
+                <span class="thumb"></span>
+              </div>
+              <div class="account">
+                <a href="/login">立即登录</a>
+              </div>
+            </div>
+            <div class="dialog-body">
+              <ul class="breadcrumb">
+                <li><a href="/all">所有笔记</a></li>
+                <li><a href="/book">笔记本</a></li>
+              </ul>
+            </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <% for(var key in notes) { %>
+        <% for(var k in notes[key]) { %>
+          <div class="notes">
+            <div class="notetitle"><%= notes[key][k].title %></div>
+            <div class="notedate"><%= notes[key][k].updated %></div>
+            <div class="notecontent"><%= notes[key][k].content %></div>
+          </div>
+        <% } %>
+      <% } %>
+    </div>
+
+    <a class="btnbar" href="/post">+</a>
 
     <script src="/common/js/jquery-2.2.3.min.js"></script>
-    <script src="/common/js/bootstrap.min.js"></script>
+    <script src="/index/js/index.js"></script>
   </body>
 </html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <title>笔记</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <link rel='stylesheet' href='/common/css/note.css' />
+    <link rel='stylesheet' href='/post/css/post.css' />
+  </head>
+  <body>
+  
+    <div class="header">
+      <div class="navbar">
+        <div class="navbar-left">
+          <span class="navbar-tool navbar-back" data-href="/"></span>
+        </div>
+        <div class="navbar-right">
+          <a id="push" class="navbar-tool">完成</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <form class="form-group" method="post">
+        <div class="input-group">
+          <input type="text" id="title" placeholder="标题">
+        </div>
+        <div class="input-group">
+          <input type="text" readonly="readonly" id="book" data-toggle="slider" href="#collapseSlider" aria-expanded="false" aria-controls="collapseSlider" placeholder="点击选择笔记本">
+        </div>
+        <div class="textarea-group">
+          <div id="content" class="form-textarea" contenteditable="true" placeholder="写下此刻的想法..."></div> 
+        </div>
+      </form>
+    </div>
+
+    <div class="navbar-slider fade" id="collapseSlider">
+      <div class="dialog">
+        <div class="dialog-header">
+          <div class="dialog-title">
+            <h2>选择笔记本</h2>
+            <span id="addbook">+</span>
+          </div>
+        </div>
+        <div class="dialog-body">
+          <% if(book.length > 0) { %>
+          <ul id="selectbook" class="breadcrumb">
+            <% for(var key in book) { %>
+            <li data-book="<%= book[key].book %>"><a href="#"><%= book[key].book %></a></li>
+            <% } %>
+          </ul>
+          <% } else { %>
+            <p class="notbooktip">你还没有笔记本哦，请先点击右上角图标添加笔记本</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <script src="/common/js/jquery-2.2.3.min.js"></script>
+    <script src="/index/js/index.js"></script>
+    <script>
+      
+      $(function() {
+
+        //add book
+        $('#addbook').on('click', function() {
+          var $this = $(this);
+          var book = prompt("输入笔记本名","")
+          if (book != null && book != "") {
+            var data = {
+              book: book
+            };
+
+            $.post('/book', data, function(data) {
+              if(data.status == 1) {
+                alert(data.err);
+              } else if(data.status == 2) {
+                alert(data.content);
+
+                if($('#selectbook').length == 0) {
+                  $('.dialog-body').append('<ul id="selectbook" class="breadcrumb"><li data-book="' + data.data.book + '"><a href="#">' + data.data.book + '</a></li></ul>');
+
+                  $('.notbooktip').remove();
+                } else {
+                  $('#selectbook').append('<li data-book="' + data.data.book + '"><a href="#">' + data.data.book + '</a></li>');
+                }
+
+                //select book
+                $('#selectbook li').on('click', function() {
+                  var book = $(this).data('book');
+                  $('#book').val(book);
+
+                  $(this).siblings().removeClass('active');
+                  $(this).addClass('active');
+                  $(this).parents('#collapseSlider').click();
+                });
+              }
+            });
+          }
+        });
+
+        //select book
+        $('#selectbook li').on('click', function() {
+          var book = $(this).data('book');
+          $('#book').val(book);
+
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+          $(this).parents('#collapseSlider').click();
+        });
+
+        //push
+        $('#push').on('click', function() {
+          var $title = $('#title');
+          var $book = $('#book');
+          var $content = $('#content');
+
+          var titleVal = $.trim($title.val());
+          if(titleVal == '') {
+            alert('标题不能为空');
+            return false;
+          }
+
+          var bookVal = $.trim($book.val());
+          if(bookVal == '') {
+            alert('笔记本不能为空，请点击选择');
+            return false;
+          }
+
+          var contentVal = $content.html();
+          if(contentVal == '') {
+            alert('内容不能为空');
+            $content.focus();
+            return false;
+          }
+
+          var data = {
+            title: titleVal,
+            book: bookVal,
+            content: contentVal
+          }
+
+          $.post('/post', data, function(data) {
+            if(data.status == 0) {
+              alert(data.err);
+            } else if(data.status == 1) {
+              alert(data.content);
+              window.location.href = '/';
+            }
+          });
+        });
+
+      });
+
+    </script>
+  </body>
+</html>
