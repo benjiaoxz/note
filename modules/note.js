@@ -23,7 +23,7 @@ Note.prototype.save = function(callback) {
 		bookid: this.bookid,
 		title: this.title,
 		content: this.content,
-		updated: moment().format('YYYY-MM-DD')
+		updated: moment().format('YYYY-MM-DD HH:mm')
 	};
 
 	var newNote = new noteModel(note);
@@ -52,6 +52,25 @@ Note.get = function(bookid, callback) {
 		}
 		callback(null, note);
 	});
+};
+
+Note.update = function(noteid, newNote, callback) {
+	noteModel.findById(noteid, function(err, person){
+		if(err) {
+			return callback(err);
+		}
+		
+		var _id = person._id;
+		delete person._id;
+		newNote.updated = moment().format('YYYY-MM-DD HH:mm');
+		person = newNote;
+		noteModel.update({_id: _id}, person, function(err){
+			if(err) {
+				return callback(err);
+			}
+			callback(null);
+		});
+    });
 };
 
 module.exports = Note;

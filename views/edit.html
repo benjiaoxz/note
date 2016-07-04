@@ -2,13 +2,13 @@
 <html>
   <head>
   	<meta charset="utf-8">
-    <title>笔记</title>
+    <title>编辑</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="email=no">
     <link rel='stylesheet' href='/common/css/note.css' />
-    <link rel='stylesheet' href='/post/css/post.css' />
+    <link rel='stylesheet' href='/edit/css/edit.css' />
   </head>
   <body>
   
@@ -18,7 +18,7 @@
           <span class="navbar-tool navbar-back" data-href="/"></span>
         </div>
         <div class="navbar-right">
-          <a id="push" class="navbar-tool">完成</a>
+          <span id="push" class="navbar-tool" data-href="/">完成</span>
         </div>
       </div>
     </div>
@@ -26,13 +26,14 @@
     <div class="container">
       <form class="form-group" method="post">
         <div class="input-group">
-          <input type="text" id="title" placeholder="标题">
+          <input type="hidden" id="noteid" value="<%= notes._id %>">
+          <input type="text" id="title" value="<%= notes.title %>" placeholder="标题">
         </div>
         <div class="input-group">
-          <input type="text" readonly="readonly" id="book" data-toggle="slider" href="#collapseSlider" aria-expanded="false" aria-controls="collapseSlider" placeholder="点击选择笔记本">
+          <input type="text" value="<%= notes.book %>" readonly="readonly" id="book" data-toggle="slider" href="#collapseSlider" aria-expanded="false" aria-controls="collapseSlider" placeholder="点击选择笔记本">
         </div>
         <div class="textarea-group">
-          <div id="content" class="form-textarea" contenteditable="true" placeholder="写下此刻的想法..."></div> 
+          <div id="content" class="form-textarea" contenteditable="true" placeholder="写下此刻的想法..."><%= notes.content %></div> 
         </div>
       </form>
     </div>
@@ -46,15 +47,11 @@
           </div>
         </div>
         <div class="dialog-body">
-          <% if(book.length > 0) { %>
           <ul id="selectbook" class="breadcrumb">
-            <% for(var key in book) { %>
-            <li data-book="<%= book[key].book %>"><a href="#"><%= book[key].book %></a></li>
+            <% for(var key in books) { %>
+            <li <% if(notes.book == books[key].book) { %> class="active" <% } %> data-book="<%= books[key].book %>"><a href="#"><%= books[key].book %></a></li>
             <% } %>
           </ul>
-          <% } else { %>
-            <p class="notbooktip">你还没有笔记本哦，请先点击右上角图标添加笔记本</p>
-          <% } %>
         </div>
       </div>
     </div>
@@ -64,18 +61,20 @@
     <script>
       
       $(function() {
+        var oldNote = '<%- JSON.stringify(oldNote) %>';
+        oldNote = JSON.parse(oldNote);
 
         //back
         $('.navbar-back').on('click', function() {
           var $this = $(this);
           var url = $this.data('href');
-          var back = new noteForm();
 
-          back.empty(function(arg) {
+          var back = new noteForm();
+          back.same(oldNote, function(arg) {
             if(arg) {
-              noteForm.confirm('笔记为空，确定退出吗？', url);
+              noteForm.confirm('笔记没有修改，你确定要退出编辑吗？', url);
             } else {
-              noteForm.confirm('笔记不为空，确定退出吗？', url);
+              noteForm.confirm('笔记已修改，你确定要直接退出编辑吗？', url);
             }
           });
         });
@@ -95,13 +94,8 @@
               } else if(data.status == 2) {
                 alert(data.content);
 
-                if($('#selectbook').length == 0) {
-                  $('.dialog-body').append('<ul id="selectbook" class="breadcrumb"><li data-book="' + data.data.book + '"><a href="#">' + data.data.book + '</a></li></ul>');
-
-                  $('.notbooktip').remove();
-                } else {
-                  $('#selectbook').append('<li data-book="' + data.data.book + '"><a href="#">' + data.data.book + '</a></li>');
-                }
+                var $li = $('<li data-book="' + data.data.book + '"><a href="#">' + data.data.book + '</a></li>');
+                $('#selectbook').append($li);
 
                 //select book
                 $('#selectbook li').on('click', function() {
@@ -131,22 +125,30 @@
 
         //push
         $('#push').on('click', function() {
-          var $this = $(this);
-          var url = $this.data('href');
           var push = new noteForm();
+          var url = $(this).data('href');
 
-          push.verify(function(newNote) {
-            $.post('/post', newNote, function(note) {
-              if(note.status == 0) {
-                alert(note.err);
-              } else if(note.status == 1) {
-                alert(note.content);
-                window.location.href = url;
-              }
-            });
+          push.same(oldNote, function(arg) {
+            if(arg) {
+              noteForm.confirm('笔记没有修改，你确定要保存吗？', url);
+            } else {
+              push.verify(function(newNote) {
+                var noteid = $('#noteid').val();
+                newNote.noteid = noteid;
+
+                $.post('/edit', newNote, function(note) {
+                  if(note.status == 0) {
+                    alert(note.err);
+                  } else if(note.status == 1) {
+                    alert(note.content);
+                    window.location.href = url;
+                  }
+                });
+              });
+            }
           });
         });
-        
+
       });
 
     </script>

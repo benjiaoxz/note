@@ -2,13 +2,14 @@
 <html>
   <head>
   	<meta charset="utf-8">
-    <title>Note</title>
+    <title>笔记本</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
     <meta name="format-detection" content="telephone=no">
     <meta name="format-detection" content="email=no">
     <link rel='stylesheet' href='/common/css/note.css' />
     <link rel='stylesheet' href='/index/css/index.css' />
+    <link rel='stylesheet' href='/book/css/book.css' />
   </head>
   <body>
   
@@ -16,7 +17,7 @@
       <div class="navbar">
         <div class="navbar-left">
           <span class="navbar-tool navbar-hamburger" data-toggle="slider" data-href="#collapseSlider" aria-expanded="false" aria-controls="collapseSlider"></span>
-          <span class="navbar-tool navbar-brand">Note</span>
+          <span class="navbar-tool navbar-brand">笔记本</span>
         </div>
         <div class="navbar-right">
           <span class="navbar-tool navbar-search"></span>
@@ -30,13 +31,13 @@
                 <span class="thumb"></span>
               </div>
               <div class="account">
-                <a href="/user?username=<%= user.username %>"><%= user.username %></a>
+                <a href="#">445088977@qq.com</a>
               </div>
             </div>
             <div class="dialog-body">
               <ul class="breadcrumb">
-                <li class="active"><a href="/">所有笔记</a></li>
-                <li><a href="/book">笔记本</a></li>
+                <li><a href="/">所有笔记</a></li>
+                <li class="active"><a href="/book">笔记本</a></li>
               </ul>
             </div>
             <% } else { %>
@@ -50,7 +51,7 @@
             </div>
             <div class="dialog-body">
               <ul class="breadcrumb">
-                <li class="active"><a href="/">所有笔记</a></li>
+                <li><a href="/all">所有笔记</a></li>
                 <li><a href="/book">笔记本</a></li>
               </ul>
             </div>
@@ -60,19 +61,18 @@
       </div>
     </div>
 
-    <div class="notes">
-      <p><%= error %></p>
-      <% if(notes) { %>
-        <% for(var i = 0; i < notes.length; i++) { %>
-          <% for(var n = 0; n < notes[i][1].length; n++) { %>
-            <div class="item">
-              <div class="notetitle"><%= notes[i][1][n].title %></div>
-              <div class="notecontent" data-href="/edit?noteid=<%= notes[i][1][n]._id %>"><%= notes[i][1][n].content %></div>
-              <div class="notedate"><%= notes[i][1][n].updated %></div>
+    <div class="container">
+      <div class="books">
+        <p><%= error %></p>
+        <% if(books) { %>
+          <% books.forEach(function(book) { %>
+            <div class="item" data-href="/list/?book=<%= book.book %>&noteLength=<%= book.noteLength %>&bookid=<%= book._id %>">
+              <h2><%= book.book %></h2>
+              <p><%= book.noteLength %> 笔记</p>
             </div>
-          <% } %>
+          <% }) %>
         <% } %>
-      <% } %>
+      </div>
     </div>
 
     <a class="btnbar" href="/post">+</a>

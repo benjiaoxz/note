@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <title>user</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <link rel='stylesheet' href='/common/css/note.css' />
+    <link rel='stylesheet' href='/user/css/user.css' />
+  </head>
+  <body>
+  
+    <div class="header">
+      <div class="navbar">
+        <div class="navbar-left">
+          <a class="navbar-tool navbar-back" href="/"></a>
+          <a class="navbar-tool navbar-brand">账户信息</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <p><%= error %></p>
+      <div class="users">
+        <div class="item">
+          <h2><%= user.username %></h2>
+        </div>
+        <div class="item logout" data-href="/logout">
+          <h2>退出登录</h2>
+        </div>
+      </div>
+    </div>
+
+    <script src="/common/js/jquery-2.2.3.min.js"></script>
+    <script>
+      
+      $(function() {
+
+        $('.logout').on('click', function() {
+          var url = $(this).data('href');
+          if(confirm('确定要退出吗？')) {
+            window.location.href = url;
+          }
+        });
+
+      });
+
+    </script>
+  </body>
+</html>

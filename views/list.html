@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <title>笔记</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no">
+    <link rel='stylesheet' href='/common/css/note.css' />
+    <link rel='stylesheet' href='/index/css/index.css' />
+    <link rel='stylesheet' href='/list/css/list.css' />
+  </head>
+  <body>
+  
+    <div class="header">
+      <div class="navbar">
+        <div class="navbar-left">
+          <span class="navbar-tool navbar-back" data-href="/book"></span>
+        </div>
+        <div class="navbar-right">
+          <span class="navbar-tool navbar-search"></span>
+          <span class="navbar-tool navbar-options"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container books">
+      <div class="book">
+        <h2><%= books.book %></h2>
+        <p><%= books.noteLength %> 笔记</p>
+      </div>
+    </div>
+
+    <div class="notes">
+      <% notes.forEach(function(note) { %>
+        <div class="item">
+          <div class="notetitle"><%= note.title %></div>
+          <div class="notecontent" data-href="/edit?noteid=<%= note._id %>"><%= note.content %></div>
+          <div class="notedate"><%= note.updated %></div>
+        </div>
+      <% }) %>
+    </div>
+
+    <a class="btnbar" href="/post">+</a>
+
+    <div class="control fade">
+      <div class="control-dialog">
+        <ul class="control-list">
+          <li id="select">选择</li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="/common/js/jquery-2.2.3.min.js"></script>
+    <script src="/common/js/note.js"></script>
+    <script src="/common/js/control.js"></script>
+  </body>
+</html>
