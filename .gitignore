@@ -1,9 +1,6 @@
 config.js
 node_modules
 
-*.min.*.js
-*.min.*.css
-
 # Ignore Mac OS desktop services store
 .DS_Store
 
